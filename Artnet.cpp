@@ -121,7 +121,7 @@ uint16_t Artnet::read()
 
         uint8_t swin[4]  = {0x01,0x02,0x03,0x04};
         uint8_t swout[4] = {0x01,0x02,0x03,0x04};
-        for(uint8_t i = 0; i <= 4; i++)
+        for(uint8_t i = 0; i < 4; i++)
         {
             ArtPollReply.swout[i] = swout[i];
             ArtPollReply.swin[i] = swin[i];
