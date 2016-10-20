@@ -26,8 +26,14 @@ THE SOFTWARE.
 #define ARTNET_H
 
 #include <Arduino.h>
-#include <Ethernet.h>
-#include <EthernetUdp.h>
+
+#if defined(ARDUINO_SAMD_ZERO)
+    #include <WiFi101.h>
+    #include <WiFiUdp.h>
+#else
+    #include <Ethernet.h>
+    #include <EthernetUdp.h>
+#endif
 
 // UDP specific
 #define ART_NET_PORT 6454
@@ -46,6 +52,7 @@ public:
   Artnet();
 
   void begin(byte mac[], byte ip[]);
+  void begin();
   uint16_t read();
   void printPacketHeader();
   void printPacketContent();
@@ -74,16 +81,21 @@ public:
   inline uint16_t getLength(void)
   {
     return dmxDataLength;
-  } 
+  }
 
-  inline void setArtDmxCallback(void (*fptr)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)) 
+  inline void setArtDmxCallback(void (*fptr)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data))
   {
     artDmxCallback = fptr;
   }
 
 private:
-  EthernetUDP Udp;
-  
+  #if defined(ARDUINO_SAMD_ZERO)
+    WiFiUDP Udp;
+  #else
+    EthernetUDP Udp;
+  #endif
+
+
   uint8_t artnetPacket[MAX_BUFFER_ARTNET];
   uint16_t packetSize;
   uint16_t opcode;

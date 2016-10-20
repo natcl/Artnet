@@ -28,16 +28,24 @@ Artnet::Artnet() {}
 
 void Artnet::begin(byte mac[], byte ip[])
 {
-  Ethernet.begin(mac,ip);
+  #if !defined(ARDUINO_SAMD_ZERO)
+    Ethernet.begin(mac,ip);
+  #endif
+
+  Udp.begin(ART_NET_PORT);
+}
+
+void Artnet::begin()
+{
   Udp.begin(ART_NET_PORT);
 }
 
 uint16_t Artnet::read()
 {
   packetSize = Udp.parsePacket();
-  
+
   if (packetSize <= MAX_BUFFER_ARTNET && packetSize > 0)
-  { 
+  {
       Udp.read(artnetPacket, MAX_BUFFER_ARTNET);
 
       // Check that packetID is "Art-Net" else ignore
@@ -46,13 +54,13 @@ uint16_t Artnet::read()
         if (artnetPacket[i] != ART_NET_ID[i])
           return 0;
       }
-        
-      opcode = artnetPacket[8] | artnetPacket[9] << 8; 
+
+      opcode = artnetPacket[8] | artnetPacket[9] << 8;
 
       if (opcode == ART_DMX)
       {
         sequence = artnetPacket[12];
-        incomingUniverse = artnetPacket[14] | artnetPacket[15] << 8;  
+        incomingUniverse = artnetPacket[14] | artnetPacket[15] << 8;
         dmxDataLength = artnetPacket[17] | artnetPacket[16] << 8;
 
         if (artDmxCallback) (*artDmxCallback)(incomingUniverse, dmxDataLength, sequence, artnetPacket + ART_DMX_START);
@@ -60,7 +68,7 @@ uint16_t Artnet::read()
       }
       if (opcode == ART_POLL)
       {
-        return ART_POLL; 
+        return ART_POLL;
       }
   }
   else
