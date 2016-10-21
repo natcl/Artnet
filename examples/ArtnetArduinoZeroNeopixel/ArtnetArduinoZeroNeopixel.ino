@@ -54,9 +54,9 @@ void setup() {
         oled.println(ssid);
         // oled.display();
 
-        while (!Serial) {
-                ; // wait for serial port to connect. Needed for native USB port only
-        }
+        // while (!Serial) {
+        //         ; // wait for serial port to connect. Needed for native USB port only
+        // }
 
         // check for the presence of the shield:
         if (WiFi.status() == WL_NO_SHIELD) {
