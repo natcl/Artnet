@@ -144,7 +144,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
         Serial.println();
         Serial.println();
 
-        for (int i = 0; i < 64; i++)  {
+        for (int i = 0; i < (length / 3); i++)  {
                 leds.setPixelColor(i, data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
         }
         leds.show();
