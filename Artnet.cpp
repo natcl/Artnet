@@ -49,7 +49,7 @@ uint16_t Artnet::read()
       Udp.read(artnetPacket, MAX_BUFFER_ARTNET);
 
       // Check that packetID is "Art-Net" else ignore
-      for (byte i = 0 ; i < 9 ; i++)
+      for (byte i = 0 ; i < 8 ; i++)
       {
         if (artnetPacket[i] != ART_NET_ID[i])
           return 0;
