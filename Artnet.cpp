@@ -70,6 +70,7 @@ uint16_t Artnet::read()
       {
         return ART_POLL;
       }
+      return 0;
   }
   else
   {
