@@ -35,6 +35,15 @@ void Artnet::begin(byte mac[], byte ip[])
   Udp.begin(ART_NET_PORT);
 }
 
+void Artnet::begin(byte mac[], byte ip[], byte dns[], byte gateway[], byte subnet[])
+{
+  #if !defined(ARDUINO_SAMD_ZERO)
+    Ethernet.begin(mac, ip, dns, gateway, subnet);
+  #endif
+
+  Udp.begin(ART_NET_PORT);
+}
+
 void Artnet::begin()
 {
   Udp.begin(ART_NET_PORT);
