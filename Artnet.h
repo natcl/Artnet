@@ -51,6 +51,7 @@ class Artnet
 public:
   Artnet();
 
+  void begin(byte mac[], byte ip[], byte dns[], byte gateway[], byte subnet[]);
   void begin(byte mac[], byte ip[]);
   void begin();
   uint16_t read();
