@@ -2,11 +2,10 @@
 This is a basic example that will print out the header and the content of an ArtDmx packet.
 This example uses the read() function and the different getter functions to read the data.
 This example may be copied under the terms of the MIT license, see the LICENSE file for details
+This works with ESP8266 and ESP32 based boards
 */
 
 #include <Artnet.h>
-#include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
 
 const char* ssid     = "yourssid";
 const char* password = "yourpassword";
@@ -16,7 +15,7 @@ Artnet artnet;
 void setup()
 {
   Serial.begin(115200);
-  WiFi.begin("ssid", "password");
+  WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(250);
     Serial.print(".");
@@ -26,7 +25,7 @@ void setup()
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-  
+
   artnet.begin();
 }
 
@@ -51,4 +50,3 @@ void loop()
     Serial.println();
   }
 }
-

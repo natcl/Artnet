@@ -33,6 +33,9 @@ THE SOFTWARE.
 #elif defined(ESP8266)
     #include <ESP8266WiFi.h>
     #include <WiFiUdp.h>
+#elif defined(ESP32)
+    #include <WiFi.h>
+    #include <WiFiUdp.h>
 #else
     #include <Ethernet.h>
     #include <EthernetUdp.h>
@@ -92,9 +95,7 @@ public:
   }
 
 private:
-  #if defined(ARDUINO_SAMD_ZERO)
-    WiFiUDP Udp;
-  #elif defined(ESP8266)
+  #if defined(ARDUINO_SAMD_ZERO) || defined(ESP8266) || defined(ESP32)
     WiFiUDP Udp;
   #else
     EthernetUDP Udp;

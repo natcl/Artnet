@@ -28,7 +28,7 @@ Artnet::Artnet() {}
 
 void Artnet::begin(byte mac[], byte ip[])
 {
-  #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266)
+  #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
     Ethernet.begin(mac,ip);
   #endif
 
