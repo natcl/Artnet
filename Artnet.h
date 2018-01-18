@@ -30,6 +30,9 @@ THE SOFTWARE.
 #if defined(ARDUINO_SAMD_ZERO)
     #include <WiFi101.h>
     #include <WiFiUdp.h>
+#elif defined(ESP8266)
+    #include <ESP8266WiFi.h>
+    #include <WiFiUdp.h>
 #else
     #include <Ethernet.h>
     #include <EthernetUdp.h>
@@ -51,7 +54,6 @@ class Artnet
 public:
   Artnet();
 
-  void begin(byte mac[], byte ip[], byte dns[], byte gateway[], byte subnet[]);
   void begin(byte mac[], byte ip[]);
   void begin();
   uint16_t read();
@@ -91,6 +93,8 @@ public:
 
 private:
   #if defined(ARDUINO_SAMD_ZERO)
+    WiFiUDP Udp;
+  #elif defined(ESP8266)
     WiFiUDP Udp;
   #else
     EthernetUDP Udp;

@@ -28,17 +28,8 @@ Artnet::Artnet() {}
 
 void Artnet::begin(byte mac[], byte ip[])
 {
-  #if !defined(ARDUINO_SAMD_ZERO)
+  #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266)
     Ethernet.begin(mac,ip);
-  #endif
-
-  Udp.begin(ART_NET_PORT);
-}
-
-void Artnet::begin(byte mac[], byte ip[], byte dns[], byte gateway[], byte subnet[])
-{
-  #if !defined(ARDUINO_SAMD_ZERO)
-    Ethernet.begin(mac, ip, dns, gateway, subnet);
   #endif
 
   Udp.begin(ART_NET_PORT);
@@ -58,7 +49,7 @@ uint16_t Artnet::read()
       Udp.read(artnetPacket, MAX_BUFFER_ARTNET);
 
       // Check that packetID is "Art-Net" else ignore
-      for (byte i = 0 ; i < 8 ; i++)
+      for (byte i = 0 ; i < 9 ; i++)
       {
         if (artnetPacket[i] != ART_NET_ID[i])
           return 0;
@@ -79,7 +70,6 @@ uint16_t Artnet::read()
       {
         return ART_POLL;
       }
-      return 0;
   }
   else
   {
