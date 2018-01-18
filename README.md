@@ -2,6 +2,8 @@
 
 An Art-Net library for Teensy and Arduino
 
+Also supports Arduino Zero and ESP8266 based boards
+
 Note: this library assumes you are using the standard Ethernet library
 
 ## Installation
