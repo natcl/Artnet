@@ -27,14 +27,15 @@ bool sendFrame = 1;
 int previousDataLength = 0;
 
 // Change ip and mac address for your setup
-byte ip[] = {192, 168, 2, 2};
+byte ip[] = {10, 0, 1, 199};
 byte mac[] = {0x04, 0xE9, 0xE5, 0x00, 0x69, 0xEC};
-
+byte broadcast[] = {10, 0, 1, 255};
 void setup()
 {
   //Serial.begin(115200);
   artnet.begin(mac, ip);
   leds.begin();
+  artnet.setBroadcast(broadcast);
   initTest();
 
   // this will be called for each packet received
