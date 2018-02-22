@@ -61,7 +61,7 @@ uint16_t Artnet::read()
         if (artnetPacket[i] != ART_NET_ID[i])
           return 0;
       }
-        
+
       opcode = artnetPacket[8] | artnetPacket[9] << 8;
 
       if (opcode == ART_DMX)
@@ -79,13 +79,13 @@ uint16_t Artnet::read()
         Serial.print("POLL from ");
         Serial.print(artnetServer);
         Serial.print(" broadcast addr: ");
-	Serial.println(broadcast);
+        Serial.println(broadcast);
 
-#if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
-	IPAddress local_ip = Ethernet.localIP();
-#else
-	IPAddress local_ip = WiFi.localIP();
-#endif
+        #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
+	  IPAddress local_ip = Ethernet.localIP();
+        #else
+	  IPAddress local_ip = WiFi.localIP();
+        #endif
 	node_ip_address[0] = local_ip[0];
 	node_ip_address[1] = local_ip[1];
 	node_ip_address[2] = local_ip[2];
