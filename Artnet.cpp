@@ -79,13 +79,17 @@ uint16_t Artnet::read()
         Serial.print("POLL from ");
         Serial.print(artnetServer);
         Serial.print(" broadcast addr: ");
-        Serial.println(broadcast);
+	Serial.println(broadcast);
 
-        IPAddress local_ip = Ethernet.localIP();
-        node_ip_address[0] = local_ip[0];
-        node_ip_address[1] = local_ip[1];
-        node_ip_address[2] = local_ip[2];
-        node_ip_address[3] = local_ip[3];
+#if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
+	IPAddress local_ip = Ethernet.localIP();
+#else
+	IPAddress local_ip = WiFi.localIP();
+#endif
+	node_ip_address[0] = local_ip[0];
+	node_ip_address[1] = local_ip[1];
+	node_ip_address[2] = local_ip[2];
+	node_ip_address[3] = local_ip[3];
 
         sprintf((char *)id, "Art-Net\0");
         memcpy(ArtPollReply.id, id, sizeof(ArtPollReply.id));
