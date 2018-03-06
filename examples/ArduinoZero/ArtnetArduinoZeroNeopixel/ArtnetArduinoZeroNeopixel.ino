@@ -126,7 +126,7 @@ void printWifiStatus() {
         // oled.display();
 }
 
-void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
+void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)
 {
         // print out our data
         Serial.print("universe number = ");
