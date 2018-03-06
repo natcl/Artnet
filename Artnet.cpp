@@ -49,8 +49,8 @@ void Artnet::setBroadcast(byte bc[])
 uint16_t Artnet::read()
 {
   packetSize = Udp.parsePacket();
-  
-  IPAddress artnetServer = Udp.remoteIP();
+
+  remoteIP = Udp.remoteIP();
   if (packetSize <= MAX_BUFFER_ARTNET && packetSize > 0)
   {
       Udp.read(artnetPacket, MAX_BUFFER_ARTNET);
@@ -70,26 +70,26 @@ uint16_t Artnet::read()
         incomingUniverse = artnetPacket[14] | artnetPacket[15] << 8;
         dmxDataLength = artnetPacket[17] | artnetPacket[16] << 8;
 
-        if (artDmxCallback) (*artDmxCallback)(incomingUniverse, dmxDataLength, sequence, artnetPacket + ART_DMX_START);
+        if (artDmxCallback) (*artDmxCallback)(incomingUniverse, dmxDataLength, sequence, artnetPacket + ART_DMX_START, remoteIP);
         return ART_DMX;
       }
       if (opcode == ART_POLL)
       {
         //fill the reply struct, and then send it to the network's broadcast address
         Serial.print("POLL from ");
-        Serial.print(artnetServer);
+        Serial.print(remoteIP);
         Serial.print(" broadcast addr: ");
         Serial.println(broadcast);
 
         #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
-	  IPAddress local_ip = Ethernet.localIP();
+          IPAddress local_ip = Ethernet.localIP();
         #else
-	  IPAddress local_ip = WiFi.localIP();
+          IPAddress local_ip = WiFi.localIP();
         #endif
-	node_ip_address[0] = local_ip[0];
-	node_ip_address[1] = local_ip[1];
-	node_ip_address[2] = local_ip[2];
-	node_ip_address[3] = local_ip[3];
+        node_ip_address[0] = local_ip[0];
+      	node_ip_address[1] = local_ip[1];
+      	node_ip_address[2] = local_ip[2];
+      	node_ip_address[3] = local_ip[3];
 
         sprintf((char *)id, "Art-Net\0");
         memcpy(ArtPollReply.id, id, sizeof(ArtPollReply.id));
@@ -97,7 +97,7 @@ uint16_t Artnet::read()
 
         ArtPollReply.opCode = ART_POLL_REPLY;
         ArtPollReply.port =  ART_NET_PORT;
-        
+
         memset(ArtPollReply.goodinput,  0x08, 4);
         memset(ArtPollReply.goodoutput,  0x80, 4);
         memset(ArtPollReply.porttypes,  0xc0, 4);
@@ -122,7 +122,7 @@ uint16_t Artnet::read()
         ArtPollReply.swvideo    = 0;
         ArtPollReply.swmacro    = 0;
         ArtPollReply.swremote   = 0;
-        ArtPollReply.style      = 0;   
+        ArtPollReply.style      = 0;
 
         ArtPollReply.numbportsH = 0;
         ArtPollReply.numbports  = 4;
@@ -140,12 +140,17 @@ uint16_t Artnet::read()
             ArtPollReply.swout[i] = swout[i];
             ArtPollReply.swin[i] = swin[i];
         }
-        sprintf((char *)ArtPollReply.nodereport, "%i DMX output universes active.\0", ArtPollReply.numbports);  
+        sprintf((char *)ArtPollReply.nodereport, "%i DMX output universes active.\0", ArtPollReply.numbports);
         Udp.beginPacket(broadcast, ART_NET_PORT);//send the packet to the broadcast address
         Udp.write((uint8_t *)&ArtPollReply, sizeof(ArtPollReply));
         Udp.endPacket();
 
         return ART_POLL;
+      }
+      if (opcode == ART_SYNC)
+      {
+        if (artSyncCallback) (*artSyncCallback)(remoteIP);
+        return ART_SYNC;
       }
   }
   else

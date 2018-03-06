@@ -47,6 +47,7 @@ THE SOFTWARE.
 #define ART_POLL 0x2000
 #define ART_POLL_REPLY 0x2100
 #define ART_DMX 0x5000
+#define ART_SYNC 0x5200
 // Buffers
 #define MAX_BUFFER_ARTNET 530
 // Packet
@@ -129,9 +130,19 @@ public:
     return dmxDataLength;
   }
 
-  inline void setArtDmxCallback(void (*fptr)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data))
+  inline IPAddress getRemoteIP(void)
+  {
+    return remoteIP;
+  }
+
+  inline void setArtDmxCallback(void (*fptr)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP))
   {
     artDmxCallback = fptr;
+  }
+
+  inline void setArtSyncCallback(void (*fptr)(IPAddress remoteIP))
+  {
+    artSyncCallback = fptr;
   }
 
 private:
@@ -152,7 +163,9 @@ private:
   uint8_t sequence;
   uint16_t incomingUniverse;
   uint16_t dmxDataLength;
-  void (*artDmxCallback)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data);
+  IPAddress remoteIP;
+  void (*artDmxCallback)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+  void (*artSyncCallback)(IPAddress remoteIP);
 };
 
 #endif
