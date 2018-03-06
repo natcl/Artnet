@@ -1,6 +1,6 @@
 /*
-Same as ArtnetNeoPixel.ino but with controls to record and playback sequences from an SD card. 
-To record, send 255 to the first channel of universe 14. To stop, send 0 and to playback send 127.  
+Same as ArtnetNeoPixel.ino but with controls to record and playback sequences from an SD card.
+To record, send 255 to the first channel of universe 14. To stop, send 0 and to playback send 127.
 The limit of leds seems to be around 450 to get 44 fps. The playback routine is not optimzed yet.
 This example may be copied under the terms of the MIT license, see the LICENSE file for details
 */
@@ -70,25 +70,25 @@ void loop()
       datafile.read(channelBuffer, numberOfChannels);
       for (int i = 0; i < numLeds; i++)
         leds.setPixelColor(i, channelBuffer[(i) * 3], channelBuffer[(i * 3) + 1], channelBuffer[(i * 3) + 2]);
-      
+
       leds.show();
       delay(20);
     }
     playback = 0;
     datafile.close();
-  }  
+  }
 }
 
-void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
+void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)
 {
   sendFrame = 1;
-  // set brightness of the whole strip 
+  // set brightness of the whole strip
   if (universe == 15)
   {
     leds.setBrightness(data[0]);
     leds.show();
   }
-  
+
   if (universe == 14)
   {
     // record
@@ -111,7 +111,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
     }
     // stop
     if (data[0] == 0)
-    { 
+    {
       record = 0;
       playback = 0;
       datafile.close();
@@ -147,7 +147,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   {
     datafile.write(channelBuffer, numberOfChannels);
     memset(universesReceived, 0, maxUniverses);
-  } 
+  }
 
   if (!playback && !record)
   {
@@ -155,8 +155,8 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
     for (int i = 0; i < numLeds; i++)
     {
       leds.setPixelColor(i, channelBuffer[(i) * 3], channelBuffer[(i * 3) + 1], channelBuffer[(i * 3) + 2]);
-    }      
-    
+    }
+
     if (sendFrame)
     {
       leds.show();

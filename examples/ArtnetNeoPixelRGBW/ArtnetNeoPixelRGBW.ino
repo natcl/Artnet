@@ -1,5 +1,5 @@
 /*
-This example will receive multiple universes via Artnet and control a strip of sk6812RGBW leds via 
+This example will receive multiple universes via Artnet and control a strip of sk6812RGBW leds via
 Adafruit's NeoPixel library: https://github.com/adafruit/Adafruit_NeoPixel
 This example may be copied under the terms of the MIT license, see the LICENSE file for details
 */
@@ -47,10 +47,10 @@ void loop()
   artnet.read();
 }
 
-void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
+void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)
 {
   sendFrame = 1;
-  // set brightness of the whole strip 
+  // set brightness of the whole strip
   if (universe == 15)
   {
     leds.setBrightness(data[0]);
@@ -78,8 +78,8 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
     if (led < numLeds)
       leds.setPixelColor(led, data[i * 4], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
   }
-  previousDataLength = length;     
-  
+  previousDataLength = length;
+
   if (sendFrame)
   {
     leds.show();
