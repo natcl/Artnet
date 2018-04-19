@@ -40,6 +40,7 @@ void setup()
 
   // this will be called for each packet received
   artnet.setArtDmxCallback(onDmxFrame);
+  artnet.setArtSyncCallback(onSync);
 }
 
 void loop()
