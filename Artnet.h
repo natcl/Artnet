@@ -54,6 +54,14 @@ THE SOFTWARE.
 #define ART_NET_ID "Art-Net\0"
 #define ART_DMX_START 18
 
+struct Patch{
+	uint16_t channels = 1;
+	uint16_t startAddress = 1;
+	uint8_t universe = 0;
+	uint8_t net = 0;
+	uint8_t subnet = 0;
+};
+
 struct artnet_reply_s {
   uint8_t  id[8];
   uint16_t opCode;
@@ -101,6 +109,10 @@ public:
   void begin();
   void setBroadcast(byte bc[]);
   uint16_t read();
+  void patch_to(Patch patch);
+  void patch_to(uint16_t startAddress, uint16_t universe, uint8_t net, uint8_t sub, uint16_t numChannels);
+  void patch_to(uint16_t startAddress, uint16_t universe, uint16_t numChannels);
+  void unpatch(){bIsPatched = false;};
   void printPacketHeader();
   void printPacketContent();
 
@@ -135,16 +147,20 @@ public:
     return remoteIP;
   }
 
-  inline void setArtDmxCallback(void (*fptr)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP))
+  inline void setArtDmxCallback(void (*fptr)(uint16_t universe, uint8_t net, uint8_t sub, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP))
   {
     artDmxCallback = fptr;
+  }
+
+  inline void setArtFixtureCallback(void (*fptr)(uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP))
+  {
+    artFixtureCallback = fptr;
   }
 
   inline void setArtSyncCallback(void (*fptr)(IPAddress remoteIP))
   {
     artSyncCallback = fptr;
   }
-
 private:
   uint8_t  node_ip_address[4];
   uint8_t  id[8];
@@ -155,6 +171,8 @@ private:
   #endif
   struct artnet_reply_s ArtPollReply;
 
+  bool bIsPatched;
+  struct Patch profile;
 
   uint8_t artnetPacket[MAX_BUFFER_ARTNET];
   uint16_t packetSize;
@@ -162,10 +180,15 @@ private:
   uint16_t opcode;
   uint8_t sequence;
   uint16_t incomingUniverse;
-  uint16_t dmxDataLength;
-  IPAddress remoteIP;
-  void (*artDmxCallback)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
-  void (*artSyncCallback)(IPAddress remoteIP);
-};
 
+  uint8_t in_net;
+  uint8_t in_sub;
+  uint8_t in_uni;
+  uint16_t dmxDataLength;
+
+  IPAddress remoteIP;
+  void (*artDmxCallback)(uint16_t universe, uint8_t net, uint8_t sub, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+  void (*artSyncCallback)(IPAddress remoteIP);
+  void (*artFixtureCallback)(uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+};
 #endif

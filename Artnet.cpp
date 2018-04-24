@@ -56,10 +56,8 @@ uint16_t Artnet::read()
       Udp.read(artnetPacket, MAX_BUFFER_ARTNET);
 
       // Check that packetID is "Art-Net" else ignore
-      for (byte i = 0 ; i < 9 ; i++)
-      {
-        if (artnetPacket[i] != ART_NET_ID[i])
-          return 0;
+      if (memcmp(artnetPacket, ART_NET_ID, sizeof(ART_NET_ID) != 0)) {
+        return 0;
       }
 
       opcode = artnetPacket[8] | artnetPacket[9] << 8;
@@ -67,10 +65,21 @@ uint16_t Artnet::read()
       if (opcode == ART_DMX)
       {
         sequence = artnetPacket[12];
-        incomingUniverse = artnetPacket[14] | artnetPacket[15] << 8;
-        dmxDataLength = artnetPacket[17] | artnetPacket[16] << 8;
 
-        if (artDmxCallback) (*artDmxCallback)(incomingUniverse, dmxDataLength, sequence, artnetPacket + ART_DMX_START, remoteIP);
+        in_net = (artnetPacket[15] & 0x7F);
+        in_sub = (artnetPacket[14] >> 4);
+        in_uni = (artnetPacket[14] & 0x0F);
+
+        dmxDataLength = artnetPacket[17] | artnetPacket[16] << 8;
+        if (artDmxCallback) (*artDmxCallback)(in_uni, in_net, in_sub, dmxDataLength, sequence, artnetPacket + ART_DMX_START, remoteIP);
+
+		if (bIsPatched && artFixtureCallback){
+			if (in_uni != profile.universe) return ART_DMX;
+			if (in_net != profile.net)      return ART_DMX;
+			if (in_sub != profile.subnet)   return ART_DMX;
+			(*artFixtureCallback)(profile.channels, sequence, artnetPacket + ART_DMX_START + profile.startAddress - 1, remoteIP);
+		}
+
         return ART_DMX;
       }
       if (opcode == ART_POLL)
@@ -96,7 +105,7 @@ uint16_t Artnet::read()
         memcpy(ArtPollReply.ip, node_ip_address, sizeof(ArtPollReply.ip));
 
         ArtPollReply.opCode = ART_POLL_REPLY;
-        ArtPollReply.port =  ART_NET_PORT;
+        ArtPollReply.port   = ART_NET_PORT;
 
         memset(ArtPollReply.goodinput,  0x08, 4);
         memset(ArtPollReply.goodoutput,  0x80, 4);
@@ -180,4 +189,29 @@ void Artnet::printPacketContent()
     Serial.print("  ");
   }
   Serial.println('\n');
+}
+
+void Artnet::patch_to(Patch patch)
+{
+  bIsPatched = true;
+  profile = patch;
+}
+void Artnet::patch_to(uint16_t startAdress, uint16_t universe, uint8_t net, uint8_t sub, uint16_t numChannels)
+{
+  bIsPatched = true;
+  profile.channels = numChannels;
+  profile.startAddress = startAdress;
+  profile.universe = universe;
+  profile.net = net;
+  profile.subnet = sub;
+}
+
+void Artnet::patch_to(uint16_t startAdress, uint16_t universe, uint16_t numChannels)
+{
+  bIsPatched = true;
+  profile.channels = numChannels;
+  profile.startAddress = startAdress;
+  profile.universe = universe;
+  profile.net = 0;
+  profile.subnet = 0;
 }

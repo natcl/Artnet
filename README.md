@@ -6,6 +6,12 @@ Also supports Arduino Zero, ESP8266 and ESP32 based boards
 
 Note: this library assumes you are using the standard Ethernet library
 
+## This fork
+
+This is a fork from @natcl Artnet, I needed to implement nets and subnets for my specific application
+I have also implemented a patch function, essentially making a callback for a specific address
+'''void Artnet::patch(uint16_t address, uint16_t universe, uint8_t net, uint8_t sub)'''
+
 ## Installation
 
 You can download the [master](https://github.com/natcl/Artnet/archive/master.zip) and place the folder in your `~/Documents/Arduino/libraries` folder.

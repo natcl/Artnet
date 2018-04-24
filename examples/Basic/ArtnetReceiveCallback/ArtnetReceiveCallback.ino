@@ -13,6 +13,9 @@ Artnet artnet;
 // Change ip and mac address for your setup
 byte ip[] = {192, 168, 2, 2};
 byte mac[] = {0x04, 0xE9, 0xE5, 0x00, 0x69, 0xEC};
+uint8_t myUni = 0;
+uint8_t myNet = 0;
+uint8_t mySub = 0;
 
 void setup()
 {
@@ -29,11 +32,15 @@ void loop()
   artnet.read();
 }
 
-void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)
+void onDmxFrame(uint16_t universe, uint8_t net, uint8_t sub, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP)
 {
   // print out our data
   Serial.print("universe number = ");
   Serial.print(universe);
+  Serial.print("net  = ");
+  Serial.print(net);
+  Serial.print("subnet = ");
+  Serial.print(sub);
   Serial.print("\tdata length = ");
   Serial.print(length);
   Serial.print("\tsequence n0. = ");
