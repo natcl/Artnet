@@ -91,7 +91,7 @@ uint16_t Artnet::read()
       	node_ip_address[2] = local_ip[2];
       	node_ip_address[3] = local_ip[3];
 
-        sprintf((char *)id, "Art-Net\0");
+        sprintf((char *)id, "Art-Net");
         memcpy(ArtPollReply.id, id, sizeof(ArtPollReply.id));
         memcpy(ArtPollReply.ip, node_ip_address, sizeof(ArtPollReply.ip));
 
@@ -104,8 +104,8 @@ uint16_t Artnet::read()
 
         uint8_t shortname [18];
         uint8_t longname [64];
-        sprintf((char *)shortname, "artnet arduino\0");
-        sprintf((char *)longname, "Art-Net -> Arduino Bridge\0");
+        sprintf((char *)shortname, "artnet arduino");
+        sprintf((char *)longname, "Art-Net -> Arduino Bridge");
         memcpy(ArtPollReply.shortname, shortname, sizeof(shortname));
         memcpy(ArtPollReply.longname, longname, sizeof(longname));
 
@@ -140,7 +140,7 @@ uint16_t Artnet::read()
             ArtPollReply.swout[i] = swout[i];
             ArtPollReply.swin[i] = swin[i];
         }
-        sprintf((char *)ArtPollReply.nodereport, "%i DMX output universes active.\0", ArtPollReply.numbports);
+        sprintf((char *)ArtPollReply.nodereport, "%i DMX output universes active.", ArtPollReply.numbports);
         Udp.beginPacket(broadcast, ART_NET_PORT);//send the packet to the broadcast address
         Udp.write((uint8_t *)&ArtPollReply, sizeof(ArtPollReply));
         Udp.endPacket();
@@ -157,6 +157,7 @@ uint16_t Artnet::read()
   {
     return 0;
   }
+  return 0;
 }
 
 void Artnet::printPacketHeader()
