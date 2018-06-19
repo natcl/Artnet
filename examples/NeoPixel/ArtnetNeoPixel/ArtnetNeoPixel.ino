@@ -12,7 +12,8 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 
 // Neopixel settings
 const int numLeds = 240; // change for your setup
-const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
+const int channelsPerLed = 3;
+const int numberOfChannels = numLeds * channelsPerLed; // Total number of channels you want to receive (1 led = 3 channels)
 const byte dataPin = 2;
 Adafruit_NeoPixel leds = Adafruit_NeoPixel(numLeds, dataPin, NEO_GRB + NEO_KHZ800);
 
@@ -73,11 +74,15 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   }
 
   // read universe and put into the right part of the display buffer
-  for (int i = 0; i < length / 3; i++)
+  for (int i = 0; i < length / channelsPerLed; i++)
   {
-    int led = i + (universe - startUniverse) * (previousDataLength / 3);
-    if (led < numLeds)
-      leds.setPixelColor(led, data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+    int led = i + (universe - startUniverse) * (previousDataLength / channelsPerLed);
+    if (led < numLeds) {
+      if (channelsPerLed == 4)
+        leds.setPixelColor(led, data[i * channelsPerLed], data[i * channelsPerLed + 1], data[i * channelsPerLed + 2], data[i * channelsPerLed + 3]);
+      if (channelsPerLed == 3)
+        leds.setPixelColor(led, data[i * channelsPerLed], data[i * channelsPerLed + 1], data[i * channelsPerLed + 2]);
+    }
   }
   previousDataLength = length;
 
