@@ -37,3 +37,5 @@ This is similar to ArtnetReceive but uses a callback to read the data.
 ## Acknowledgements
 
 Many thanks to virtualdave and [mortonkopf](http://orchardelica.com/wp/artnet-multiple-universe-with-teensy-3-and-octows2811) on the pjrc [forums](http://forum.pjrc.com/threads/24688-Artnet-to-OctoWS2811?highlight=artnet) for the original sketches !
+
+Avec la très aimable participation de Nicolas "Magic" Plourde
