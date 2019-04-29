@@ -1,0 +1,26 @@
+{
+  "name": "ArtNet",
+  "keywords": "artnet",
+  "description": "An Art-Net library for Teensy and Arduino",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/natcl/Artnet.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Nathanaël Lécaudé",
+      "maintainer": true
+    }
+  ],
+  "dependencies":
+  {
+    "name": "Ethernet",
+    "authors": "Paul Stoffregen",
+    "frameworks": "arduino"
+  },
+  "version": "1.0.0",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
