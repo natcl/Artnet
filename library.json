@@ -1,6 +1,6 @@
 {
-  "name": "ArtNet",
-  "keywords": "artnet",
+  "name": "Art-Net",
+  "keywords": "artnet, art-net, Ethernet, DMX",
   "description": "An Art-Net library for Teensy and Arduino",
   "repository":
   {
