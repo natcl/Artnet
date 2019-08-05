@@ -45,6 +45,11 @@ void Artnet::setBroadcast(byte bc[])
   //sets the broadcast address
   broadcast = bc;
 }
+void Artnet::setBroadcast(IPAddress bc)
+{
+  //sets the broadcast address
+  broadcast = bc;
+}
 
 uint16_t Artnet::read()
 {
