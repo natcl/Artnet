@@ -100,6 +100,7 @@ public:
   void begin(byte mac[], byte ip[]);
   void begin();
   void setBroadcast(byte bc[]);
+  void setBroadcast(IPAddress bc);
   uint16_t read();
   void printPacketHeader();
   void printPacketContent();
