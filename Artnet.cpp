@@ -33,13 +33,11 @@ void Artnet::begin(byte mac[], byte ip[])
   #endif
 
   Udp.begin(ART_NET_PORT);
-  setBroadcast();
 }
 
 void Artnet::begin()
 {
   Udp.begin(ART_NET_PORT);
-  setBroadcast();
 }
 
 void Artnet::setBroadcast()
