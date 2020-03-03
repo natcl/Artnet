@@ -42,12 +42,9 @@ void Artnet::begin()
 
 void Artnet::setBroadcastAuto(IPAddress ip, IPAddress sn)
 {
-
-  //uint32_t ip32 = Ethernet.localIP(); //Need Validation that this is a correct use
-  uint32_t ip32 = ip[0]<<0 | ip[1]<<8 | ip[2]<<16 | ip[3]<<24;
-  
-  // uint32_t sn32 = Ethernet.subnetMask(); //Need Validation that this is a correct use
-  uint32_t sn32 = sn[0]<<0 | sn[1]<<8 | sn[2]<<16 | sn[3]<<24;
+  //Cast in uint 32 to use bitwise operation of DWORD
+  uint32_t ip32 = ip;
+  uint32_t sn32 = sn;
 
   //Find the broacast Address
   uint32_t bc = (ip32 & sn32) | (~sn32);
