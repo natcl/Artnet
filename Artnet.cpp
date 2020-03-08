@@ -40,6 +40,19 @@ void Artnet::begin()
   Udp.begin(ART_NET_PORT);
 }
 
+void Artnet::setBroadcastAuto(IPAddress ip, IPAddress sn)
+{
+  //Cast in uint 32 to use bitwise operation of DWORD
+  uint32_t ip32 = ip;
+  uint32_t sn32 = sn;
+
+  //Find the broacast Address
+  uint32_t bc = (ip32 & sn32) | (~sn32);
+
+  //sets the broadcast address
+  setBroadcast(IPAddress(bc));
+}
+
 void Artnet::setBroadcast(byte bc[])
 {
   //sets the broadcast address
