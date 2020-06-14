@@ -164,7 +164,7 @@ uint16_t Artnet::read()
         }
         memset(ArtPollReply.nodereport, 0, 64);
         sprintf((char *)ArtPollReply.nodereport, "%i DMX output universes active.", ArtPollReply.numbports);
-        Udp.beginPacket(broadcast, ART_NET_PORT);//send the packet to the broadcast address
+        Udp.beginPacket(remoteIP, ART_NET_PORT);//send the packet to the Controller that sent ArtPoll
         Udp.write((uint8_t *)&ArtPollReply, sizeof(ArtPollReply));
         Udp.endPacket();
 
