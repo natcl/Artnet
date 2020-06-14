@@ -142,6 +142,12 @@ uint16_t Artnet::read()
         ArtPollReply.swremote   = 0;
         ArtPollReply.style      = 0;
 
+        #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
+          Ethernet.MACAddress(ArtPollReply.mac);
+        #else
+          WiFi.macAdress(ArtPollReply.mac);
+        #endif
+
         ArtPollReply.numbportsH = 0;
         ArtPollReply.numbports  = 4;
         ArtPollReply.status2    = 0x08;
