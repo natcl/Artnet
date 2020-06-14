@@ -118,7 +118,7 @@ uint16_t Artnet::read()
 
         memset(ArtPollReply.goodinput,  0x08, 4);
         memset(ArtPollReply.goodoutput,  0x80, 4);
-        memset(ArtPollReply.porttypes,  0xc0, 4);
+        memset(ArtPollReply.porttypes,  0x80, 4);
 
         uint8_t shortname [18];
         uint8_t longname [64];
