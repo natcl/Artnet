@@ -118,14 +118,12 @@ uint16_t Artnet::read()
 
         memset(ArtPollReply.goodinput,  0x08, 4);
         memset(ArtPollReply.goodoutput,  0x80, 4);
-        memset(ArtPollReply.porttypes,  0xc0, 4);
+        memset(ArtPollReply.porttypes,  0x80, 4);
 
-        uint8_t shortname [18];
-        uint8_t longname [64];
-        sprintf((char *)shortname, "artnet arduino");
-        sprintf((char *)longname, "Art-Net -> Arduino Bridge");
-        memcpy(ArtPollReply.shortname, shortname, sizeof(shortname));
-        memcpy(ArtPollReply.longname, longname, sizeof(longname));
+        memset(ArtPollReply.shortname, 0, 16);
+        memset(ArtPollReply.longname, 0, 64);
+        sprintf((char *)ArtPollReply.shortname, "artnet arduino");
+        sprintf((char *)ArtPollReply.longname, "Art-Net -> Arduino Bridge");
 
         ArtPollReply.etsaman[0] = 0;
         ArtPollReply.etsaman[1] = 0;
@@ -142,6 +140,12 @@ uint16_t Artnet::read()
         ArtPollReply.swremote   = 0;
         ArtPollReply.style      = 0;
 
+        #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
+          Ethernet.MACAddress(ArtPollReply.mac);
+        #else
+          WiFi.macAdress(ArtPollReply.mac);
+        #endif
+
         ArtPollReply.numbportsH = 0;
         ArtPollReply.numbports  = 4;
         ArtPollReply.status2    = 0x08;
@@ -151,15 +155,16 @@ uint16_t Artnet::read()
         ArtPollReply.bindip[2] = node_ip_address[2];
         ArtPollReply.bindip[3] = node_ip_address[3];
 
-        uint8_t swin[4]  = {0x01,0x02,0x03,0x04};
-        uint8_t swout[4] = {0x01,0x02,0x03,0x04};
+        uint8_t swin[4]  = {0x00,0x01,0x02,0x03};
+        uint8_t swout[4] = {0x00,0x01,0x02,0x03};
         for(uint8_t i = 0; i < 4; i++)
         {
             ArtPollReply.swout[i] = swout[i];
             ArtPollReply.swin[i] = swin[i];
         }
+        memset(ArtPollReply.nodereport, 0, 64);
         sprintf((char *)ArtPollReply.nodereport, "%i DMX output universes active.", ArtPollReply.numbports);
-        Udp.beginPacket(broadcast, ART_NET_PORT);//send the packet to the broadcast address
+        Udp.beginPacket(remoteIP, ART_NET_PORT);//send the packet to the Controller that sent ArtPoll
         Udp.write((uint8_t *)&ArtPollReply, sizeof(ArtPollReply));
         Udp.endPacket();
 
