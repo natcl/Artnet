@@ -37,7 +37,9 @@ THE SOFTWARE.
     #include <WiFi.h>
     #include <WiFiUdp.h>
 #else
-	#include <EthernetClient.h>
+    #ifdef ARDUINO_ARCH_RP2040
+    #include <EthernetClient.h>
+    #endif
     #include <Ethernet.h>
     #include <EthernetUdp.h>
 #endif
