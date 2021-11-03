@@ -36,6 +36,9 @@ THE SOFTWARE.
 #elif defined(ESP32)
     #include <WiFi.h>
     #include <WiFiUdp.h>
+#elif defined(ARDUINO_TEENSY41)
+    #include <NativeEthernet.h>
+    #include <NativeEthernetUdp.h>
 #else
     #include <Ethernet.h>
     #include <EthernetUdp.h>
