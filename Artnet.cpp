@@ -35,6 +35,28 @@ void Artnet::begin(byte mac[], byte ip[])
   Udp.begin(ART_NET_PORT);
 }
 
+void Artnet::begin(byte mac[],bool setBroadcast)
+{
+
+   #if !defined(ARDUINO_SAMD_ZERO) && !defined(ESP8266) && !defined(ESP32)
+    Serial.println("Attempt to assign IP by DHCP");
+    if(Ethernet.begin(mac)!=0){
+      Serial.print("  DHCP assigned IP ");
+      Serial.println(Ethernet.localIP());
+      // Artnet Begin
+      Udp.begin(ART_NET_PORT);
+      if(setBroadcast){
+        setBroadcastAuto(Ethernet.localIP(),Ethernet.subnetMask());
+        Serial.print("  Broadcast IP ");
+      Serial.println(getBroadcastIP());
+      
+      }
+    }else{
+      Serial.println("Failed to assign ip through DHCP");
+    }
+  #endif
+ 
+}
 void Artnet::begin()
 {
   Udp.begin(ART_NET_PORT);

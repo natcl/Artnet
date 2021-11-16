@@ -40,6 +40,9 @@ THE SOFTWARE.
     #include <NativeEthernet.h>
     #include <NativeEthernetUdp.h>
 #else
+    #ifdef ARDUINO_ARCH_RP2040
+    #include <EthernetClient.h>
+    #endif
     #include <Ethernet.h>
     #include <EthernetUdp.h>
 #endif
@@ -101,6 +104,7 @@ public:
   Artnet();
 
   void begin(byte mac[], byte ip[]);
+  void begin(byte mac[],bool setBroadcast);
   void begin();
   void setBroadcastAuto(IPAddress ip, IPAddress sn);
   void setBroadcast(byte bc[]);
@@ -148,6 +152,11 @@ public:
   inline void setArtSyncCallback(void (*fptr)(IPAddress remoteIP))
   {
     artSyncCallback = fptr;
+  }
+
+  inline IPAddress getBroadcastIP(void)
+  {
+    return broadcast;
   }
 
 private:
