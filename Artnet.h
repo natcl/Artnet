@@ -31,11 +31,9 @@ THE SOFTWARE.
     #include <WiFi101.h>
     #include <WiFiUdp.h>
 #elif defined(ESP8266)
-    #include <ESP8266WiFi.h>
-    #include <WiFiUdp.h>
+    #include <ESPAsyncUDP.h>
 #elif defined(ESP32)
-    #include <WiFi.h>
-    #include <WiFiUdp.h>
+    #include <AsyncUDP.h>
 #elif defined(ARDUINO_TEENSY41)
     #include <NativeEthernet.h>
     #include <NativeEthernetUdp.h>
@@ -105,15 +103,8 @@ public:
   void setBroadcastAuto(IPAddress ip, IPAddress sn);
   void setBroadcast(byte bc[]);
   void setBroadcast(IPAddress bc);
-  uint16_t read();
   void printPacketHeader();
-  void printPacketContent();
-
-  // Return a pointer to the start of the DMX data
-  inline uint8_t* getDmxFrame(void)
-  {
-    return artnetPacket + ART_DMX_START;
-  }
+  void printPacketContent(uint8_t * ArtnetPacket);
 
   inline uint16_t getOpcode(void)
   {
@@ -145,6 +136,11 @@ public:
     artDmxCallback = fptr;
   }
 
+  inline void setArtPollCallback(void (*fptr)(IPAddress broadcastIP))
+  {
+    artDmxPollCallback = fptr;
+  }
+
   inline void setArtSyncCallback(void (*fptr)(IPAddress remoteIP))
   {
     artSyncCallback = fptr;
@@ -153,15 +149,10 @@ public:
 private:
   uint8_t  node_ip_address[4];
   uint8_t  id[8];
-  #if defined(ARDUINO_SAMD_ZERO) || defined(ESP8266) || defined(ESP32)
-    WiFiUDP Udp;
-  #else
-    EthernetUDP Udp;
-  #endif
-  struct artnet_reply_s ArtPollReply;
+  AsyncUDP udp;        // AsyncUDP
 
 
-  uint8_t artnetPacket[MAX_BUFFER_ARTNET];
+
   uint16_t packetSize;
   IPAddress broadcast;
   uint16_t opcode;
@@ -170,7 +161,12 @@ private:
   uint16_t dmxDataLength;
   IPAddress remoteIP;
   void (*artDmxCallback)(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data, IPAddress remoteIP);
+  void (*artDmxPollCallback)(IPAddress broadcastIP);
   void (*artSyncCallback)(IPAddress remoteIP);
+
+      // Packet parser callback
+    void parsePacket(AsyncUDPPacket _packet);
+
 };
 
 #endif
